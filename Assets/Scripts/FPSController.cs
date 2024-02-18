@@ -11,6 +11,7 @@ public class Movement : MonoBehaviour
     [SerializeField][Range(0.0f, 0.5f)] float mouseSmoothTime = 0.03f;
     [SerializeField] bool cursorLock = true;
     [SerializeField] float mouseSensitivity = 3.5f;
+    [SerializeField] float sideStepSpeed = 0.8f;
     [SerializeField] float Speed = 1.8f;
     [SerializeField] float sprintSpeed = 3.6f;
     [SerializeField][Range(0.0f, 0.5f)] float moveSmoothTime = 0.3f;
@@ -79,21 +80,52 @@ public class Movement : MonoBehaviour
  
         Vector3 velocityWalk = (transform.forward * currentDir.y + transform.right * currentDir.x) * Speed + Vector3.up * velocityY;
         Vector3 velocityRun = (transform.forward * currentDir.y + transform.right * currentDir.x) * sprintSpeed + Vector3.up * velocityY;
+        Vector3 velocitySideStep = (transform.forward * currentDir.y + transform.right * currentDir.x) * sideStepSpeed + Vector3.up * velocityY;
 
 
         if(Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift))
         {
             animator.SetBool("isRunning", true);
             controller.Move(velocityRun * Time.deltaTime);
-        } else if(Input.GetKey(KeyCode.W))
+        } else if(Input.GetKey(KeyCode.W) || (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.W)) || (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A)))
         {
             animator.SetBool("isRunning", false);
-            animator.SetBool("isWalking", true);
+            animator.SetBool("isWalkingRight", false);
+            animator.SetBool("isWalkingLeft", false);
+            animator.SetBool("isWalkingBack", false);
+            animator.SetBool("isWalkingForward", true);
             controller.Move(velocityWalk * Time.deltaTime);
+        } else if(Input.GetKey(KeyCode.D))
+        {
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isWalkingForward", false);
+            animator.SetBool("isWalkingLeft", false);
+            animator.SetBool("isWalkingBack", false);
+            animator.SetBool("isWalkingRight", true);
+            controller.Move(velocitySideStep * Time.deltaTime);
+        } else if(Input.GetKey(KeyCode.A))
+        {
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isWalkingForward", false);
+            animator.SetBool("isWalkingRight", false);
+            animator.SetBool("isWalkingBack", false);
+            animator.SetBool("isWalkingLeft", true);
+            controller.Move(velocitySideStep * Time.deltaTime);
+        } else if(Input.GetKey(KeyCode.S))
+        {
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isWalkingForward", false);
+            animator.SetBool("isWalkingRight", false);
+            animator.SetBool("isWalkingLeft", false);
+            animator.SetBool("isWalkingBack", true);
+            controller.Move(velocitySideStep * Time.deltaTime);
         } else 
         {
-            animator.SetBool("isWalking", false);
+            animator.SetBool("isWalkingForward", false);
             animator.SetBool("isRunning", false);
+            animator.SetBool("isWalkingRight", false);
+            animator.SetBool("isWalkingLeft", false);
+            animator.SetBool("isWalkingBack", false);
         }
  
         
